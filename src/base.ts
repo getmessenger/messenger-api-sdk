@@ -11,7 +11,7 @@ export abstract class Base {
 
   constructor(config: Config) {
     this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || "https://api-prod.getmessenger.ng";
+    this.baseUrl = config.baseUrl || "https://api-prod.getmessenger.ng"; // TODO: 1. take this out to a central file. 2. toggle staging/prod
   }
 
   // Create a method called "request" to interact with endpoints using Axios
@@ -44,6 +44,10 @@ export abstract class Base {
         }
       })
       .catch((error: AxiosError) => {
+        // TODO: create an interceptor here
+        // if we get a 401 error 'unauthorized' error, 
+        // try to authenticate
+        // if successful, store token and retry initial api call. 
         if (error.response) {
           throw new Error(
             `Status: ${error.response.status}, ${error.response.statusText}`

@@ -9,7 +9,7 @@ export class Auth extends Base {
   private accessToken: string | null;
 
   constructor(publicKey: string, privateKey: string) {
-    super({ apiKey: "", baseUrl: "https://api-prod.getmessenger.ng" });
+    super({ apiKey: "", baseUrl: "https://api-prod.getmessenger.ng" }); // TODO: 1. take this out to a central file. 2. toggle staging/prod
     this.publicKey = publicKey;
     this.privateKey = privateKey;
   }
