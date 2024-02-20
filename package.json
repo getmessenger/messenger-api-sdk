@@ -2,7 +2,7 @@
   "name": "messenger-api-sdk",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "module": "dist/index.m.js",
   "unpkg": "dist/index.umd.js",
   "types": "dist/index.d.js",
@@ -15,15 +15,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.6.7"
+    "axios": "^1.6.7",
+    "microbundle": "^0.15.1"
   },
   "files": [
-    "dist"
+    "dist/**/*"
   ],
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.19",
+    "axios-mock-adapter": "^1.22.0",
     "jest": "^29.7.0",
-    "microbundle": "^0.15.1",
-    "ts-jest": "^29.1.2"
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2"
   }
 }

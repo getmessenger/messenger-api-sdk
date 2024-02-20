@@ -1,15 +1,27 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "target": "ES6",
+    "module": "CommonJS",
     "declaration": true,
+    "esModuleInterop": true,
+    "incremental": true,
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": false,
+
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
+    "rootDir": "./",
+
+    /* Linting */
+    "skipLibCheck": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "test", "lib", "**/*spec.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules"]
 }
