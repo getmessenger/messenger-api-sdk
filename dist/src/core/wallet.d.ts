@@ -1,9 +1,9 @@
 import { MessengerSDKBase } from "./base";
 import { TransactionsResponse, WalletBalanceResponse, WalletTransactionByReferenceResponse } from "./interfaces/wallet.interface";
-export default class MessengerWallet extends MessengerSDKBase {
+export declare abstract class MessengerWallet extends MessengerSDKBase {
     private baseWalletUrl;
-    constructor(publicKey: string, privateKey: string, environment: "production" | "development");
+    constructor(publicKey: string, privateKey: string, environment: "production" | "development" | string);
     checkWalletBalance(): Promise<WalletBalanceResponse>;
-    getAllTransactions(walletId: string): Promise<TransactionsResponse>;
+    getAllTransactions(walletId: number): Promise<TransactionsResponse>;
     getTransactionByReference(reference: string): Promise<WalletTransactionByReferenceResponse>;
 }

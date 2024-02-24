@@ -5,28 +5,28 @@ import {
   WalletTransactionByReferenceResponse,
 } from "./interfaces/wallet.interface";
 
-export default class MessengerWallet extends MessengerSDKBase {
+export abstract class MessengerWallet extends MessengerSDKBase {
   private baseWalletUrl: string;
   constructor(
     publicKey: string,
     privateKey: string,
-    environment: "production" | "development"
+    environment: "production" | "development" | string
   ) {
-    super(publicKey, privateKey, environment);
+    super(publicKey, privateKey, environment as "production" | "development");
     this.baseWalletUrl = "/wallets";
   }
 
   public async checkWalletBalance(): Promise<WalletBalanceResponse> {
-    return this.makeApiRequest<WalletBalanceResponse>({
+    return this.makeApiRequest({
       method: "get",
       url: this.baseWalletUrl,
     });
   }
 
   public async getAllTransactions(
-    walletId: string
+    walletId: number
   ): Promise<TransactionsResponse> {
-    return this.makeApiRequest<TransactionsResponse>({
+    return this.makeApiRequest({
       method: "get",
       url: `${this.baseWalletUrl}/${walletId}/transactions`,
     });
@@ -35,7 +35,7 @@ export default class MessengerWallet extends MessengerSDKBase {
   public async getTransactionByReference(
     reference: string
   ): Promise<WalletTransactionByReferenceResponse> {
-    return this.makeApiRequest<WalletTransactionByReferenceResponse>({
+    return this.makeApiRequest({
       method: "get",
       url: `${this.baseWalletUrl}/transactions/${reference}`,
     });

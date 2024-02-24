@@ -3,16 +3,16 @@ import axios, {
   AxiosError,
   AxiosRequestConfig,
   AxiosResponse,
+  AxiosInstance,
 } from "axios";
 import { ENVIRON } from "./config";
 import { AuthProps, AuthResponseProps } from "./interfaces/auth.interface";
-
 export class MessengerSDKBase {
   protected baseURL: string;
-  protected publicKey: string;
-  protected privateKey: string;
-  protected axiosInstance: Axios;
-  protected environment: string = ENVIRON.PROD;
+  public publicKey: string;
+  public privateKey: string;
+  protected axiosInstance: AxiosInstance;
+  public environment: string = ENVIRON.PROD;
   private baseAuthUrl: string;
   protected accessToken: string | null = null;
   private authenticationData: AuthProps | null = null;
@@ -23,6 +23,7 @@ export class MessengerSDKBase {
       throw new Error("Public or Private keys are required!");
     if (!this.environment)
       console.warn("No environment specified. Defaulting to development.");
+    this.environment = environment || "development";
 
     this.baseURL =
       this.environment === "test" || this.environment === "development"
@@ -30,7 +31,6 @@ export class MessengerSDKBase {
         : ENVIRON.PROD;
     this.publicKey = publicKey;
     this.privateKey = privateKey;
-    this.environment = environment || "development";
 
     this.axiosInstance = axios.create({
       baseURL: this.baseURL,
@@ -43,9 +43,8 @@ export class MessengerSDKBase {
       (response: AxiosResponse) => response,
       async (error: AxiosError) => {
         if (error.response && error.response.status === 401) {
-          this.generateAndSetAccessToken();
+          this.login();
 
-          // Retry the original request after reauthentication
           return axios(error.config as AxiosRequestConfig<any>);
         }
 
@@ -54,13 +53,39 @@ export class MessengerSDKBase {
     );
   }
 
-  private async generateAndSetAccessToken(): Promise<void> {
-    const newTokenResponse = await this.axiosInstance.post(
-      `${this.baseAuthUrl}/login`,
-      this.authenticationData
-    );
+  public async login(): Promise<AuthResponseProps> {
+    if (!this.publicKey || !this.privateKey)
+      throw new Error("Public or Private keys are required!");
+    if (!this.environment)
+      console.warn("No environment specified. Defaulting to development.");
 
-    this.accessToken = newTokenResponse.headers["access_token"];
+    const credentialsString = `${this.publicKey}:${this.privateKey}`;
+    const base64Credentials = Buffer.from(credentialsString).toString("base64");
+
+    try {
+      const MessengerResponse = await this.axiosInstance.post(
+        `${this.baseAuthUrl}/login`,
+        {},
+        {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+          auth: {
+            username: this.publicKey,
+            password: this.privateKey,
+          },
+        }
+      );
+
+      // let mockAccessToken = "mockAccessToken";
+      this.accessToken = MessengerResponse.headers["access-token"];
+      // await this.generateAndSetAccessToken();
+
+      return MessengerResponse.data;
+    } catch (error: any) {
+      console.warn(error?.response?.data?.message);
+      return error.response.data;
+    }
   }
 
   public async makeApiRequest<T>(config: AxiosRequestConfig<T>): Promise<T> {
@@ -74,7 +99,7 @@ export class MessengerSDKBase {
         Authorization: `Bearer ${this.accessToken}`,
       };
 
-      const response = await axios(config);
+      const response = await this.axiosInstance(config);
 
       return response.data;
     } catch (error: unknown) {
@@ -82,9 +107,16 @@ export class MessengerSDKBase {
         const axiosError = error as AxiosError;
 
         if (axiosError.response && axiosError.response.status === 401) {
-          await this.getAccessToken();
+          console.error("Received 401. Attempting to refresh access token...");
 
-          // This should retry the original request after reauthentication
+          // Attempt to refresh access token
+          await this.login();
+          console.log(this.login());
+
+          console.log(
+            "Access token successfully refreshed. Retrying the request."
+          );
+
           return this.makeApiRequest<T>(config);
         }
 
@@ -97,41 +129,10 @@ export class MessengerSDKBase {
     }
   }
 
-  public async login(
-    authenticationData: AuthProps
-  ): Promise<AuthResponseProps> {
-    if (!authenticationData || typeof authenticationData !== "object")
-      throw new Error("Invalid authentication data!");
-    if (!this.publicKey || !this.privateKey)
-      throw new Error("Public or Private keys are required!");
-    if (!this.environment)
-      console.warn("No environment specified. Defaulting to development.");
-
-    const dataToSend = {
-      username: authenticationData.username,
-      password: authenticationData.password,
-    };
-
-    try {
-      const MessengerResponse = await this.axiosInstance.post(
-        `${this.baseAuthUrl}/login`,
-        dataToSend
-      );
-
-      this.accessToken = MessengerResponse.headers["access_token"];
-
-      return MessengerResponse.data;
-    } catch (error: any) {
-      console.warn(error?.response?.data?.message);
-      return error.response.data;
-    }
-  }
-
   public getAccessToken(): string | null {
     if (this.accessToken) {
       return this.accessToken;
     }
-
     return null;
   }
 }

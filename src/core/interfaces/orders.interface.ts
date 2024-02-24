@@ -16,6 +16,10 @@ export interface OrderEstimate {
   riders: Rider[];
 }
 
+export interface OrderEstimateData {
+  locations: Location[];
+}
+
 export interface OrderEstimateResponse extends BaseResponse {
   data: OrderEstimate;
 }
@@ -73,10 +77,6 @@ export interface ConfirmOrderResponse extends BaseResponse {
   data: ConfirmedOrder;
 }
 
-export interface CancelOrderData {
-  reason: string;
-}
-
 export interface CancelOrderResponse extends BaseResponse {
   data: ConfirmedOrder;
 }
@@ -102,6 +102,8 @@ export interface DisputedOrder {
 }
 
 export interface DisputeOrderData {
+  message: string;
+  data: DisputedOrder;
   comment: string;
 }
 
@@ -149,4 +151,20 @@ export interface Customer {
   email?: string;
   phone_number?: string;
   picture?: string | null;
+}
+
+export interface OrderAnalytics {
+  status: string;
+  count: number;
+  sum: number;
+}
+
+export interface OrderAnalyticsResponse extends BaseResponse {
+  data: OrderAnalytics[];
+  meta: {
+    total: {
+      count: number;
+      sum: number;
+    };
+  };
 }

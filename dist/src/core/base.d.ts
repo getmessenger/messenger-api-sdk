@@ -1,17 +1,16 @@
-import { Axios, AxiosRequestConfig } from "axios";
-import { AuthProps, AuthResponseProps } from "./interfaces/auth.interface";
+import { AxiosRequestConfig, AxiosInstance } from "axios";
+import { AuthResponseProps } from "./interfaces/auth.interface";
 export declare class MessengerSDKBase {
     protected baseURL: string;
-    protected publicKey: string;
-    protected privateKey: string;
-    protected axiosInstance: Axios;
-    protected environment: string;
+    publicKey: string;
+    privateKey: string;
+    protected axiosInstance: AxiosInstance;
+    environment: string;
     private baseAuthUrl;
     protected accessToken: string | null;
     private authenticationData;
     constructor(publicKey: string, privateKey: string, environment?: string);
-    private generateAndSetAccessToken;
+    login(): Promise<AuthResponseProps>;
     makeApiRequest<T>(config: AxiosRequestConfig<T>): Promise<T>;
-    login(authenticationData: AuthProps): Promise<AuthResponseProps>;
     getAccessToken(): string | null;
 }

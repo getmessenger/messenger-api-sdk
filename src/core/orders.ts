@@ -1,17 +1,19 @@
 import { MessengerSDKBase } from "./base";
 import {
   AddressCoordinateResponse,
-  CancelOrderData,
   CancelOrderResponse,
   ConfirmOrderResponse,
   DisputeOrderData,
   DisputeOrderResponse,
+  OrderAnalyticsResponse,
+  OrderEstimate,
+  OrderEstimateData,
   OrderEstimateResponse,
   OrderListResponse,
   SingleOrderResponse,
 } from "./interfaces/orders.interface";
 
-export default abstract class MessengerWallet extends MessengerSDKBase {
+export abstract class MessengerOrder extends MessengerSDKBase {
   private baseOrderUrl: string;
 
   constructor(
@@ -42,10 +44,32 @@ export default abstract class MessengerWallet extends MessengerSDKBase {
   }
 
   public async confirmOrder(orderData: any): Promise<ConfirmOrderResponse> {
-    return this.makeApiRequest<ConfirmOrderResponse>({
+    return this.makeApiRequest({
       method: "post",
       url: `${this.baseOrderUrl}/confirm`,
       data: orderData,
+    });
+  }
+
+  public async cancelOrder(
+    cancelOrderData: any,
+    orderId: number
+  ): Promise<CancelOrderResponse> {
+    return this.makeApiRequest({
+      method: "post",
+      url: `${this.baseOrderUrl}/${orderId}/cancel`,
+      data: cancelOrderData,
+    });
+  }
+
+  public async disputeOrder(
+    disputeOrderData: any,
+    orderId: number
+  ): Promise<DisputeOrderResponse> {
+    return this.makeApiRequest<DisputeOrderResponse>({
+      method: "post",
+      url: `${this.baseOrderUrl}/${orderId}/dispute`,
+      data: disputeOrderData,
     });
   }
 
@@ -60,6 +84,13 @@ export default abstract class MessengerWallet extends MessengerSDKBase {
     return this.makeApiRequest<SingleOrderResponse>({
       method: "get",
       url: `${this.baseOrderUrl}/${orderId}`,
+    });
+  }
+
+  public async fetchOrdersAnalytics(): Promise<OrderAnalyticsResponse> {
+    return this.makeApiRequest<OrderAnalyticsResponse>({
+      method: "get",
+      url: `${this.baseOrderUrl}/analytics`,
     });
   }
 }
