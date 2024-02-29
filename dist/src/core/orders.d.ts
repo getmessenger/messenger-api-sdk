@@ -1,6 +1,6 @@
-import { MessengerSDKBase } from "./base";
 import { AddressCoordinateResponse, CancelOrderResponse, ConfirmOrderResponse, DisputeOrderResponse, OrderAnalyticsResponse, OrderEstimateResponse, OrderListResponse, SingleOrderResponse } from "./interfaces/orders.interface";
-export declare abstract class MessengerOrder extends MessengerSDKBase {
+import { MessengerWallet } from "./wallet";
+export declare abstract class MessengerOrder extends MessengerWallet {
     private baseOrderUrl;
     constructor(publicKey: string, privateKey: string, environment: "production" | "development");
     estimateOrder(orderData: any): Promise<OrderEstimateResponse>;

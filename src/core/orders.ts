@@ -12,8 +12,9 @@ import {
   OrderListResponse,
   SingleOrderResponse,
 } from "./interfaces/orders.interface";
+import { MessengerWallet } from "./wallet";
 
-export abstract class MessengerOrder extends MessengerSDKBase {
+export abstract class MessengerOrder extends MessengerWallet {
   private baseOrderUrl: string;
 
   constructor(

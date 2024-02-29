@@ -1,8 +1,5 @@
-import { MessengerSDKBase } from "./core/base";
-import { MessengerWallet } from "./core/wallet";
 import { MessengerOrder } from "./core/orders";
-declare class Typicode extends MessengerSDKBase {
+declare class MessengerClient extends MessengerOrder {
+    constructor(publicKey: string, privateKey: string, environment: "production" | "development");
 }
-interface Typicode extends MessengerWallet, MessengerOrder {
-}
-export default Typicode;
+export default MessengerClient;
