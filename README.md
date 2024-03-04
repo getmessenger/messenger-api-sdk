@@ -10,58 +10,54 @@
   - [Installation 💽](#installation-)
   - [Usage](#usage)
     - [SDK Typed Response](#sdk-typed-response)
-    - [Authentication](#authentication)
-      - [Parameters](#parameters)
-      - [Returns](#returns)
-      - [Example](#example)
     - [Wallets](#wallets)
     - [Live Environment](#live-environment)
     - [Staging Environment (Sandbox)](#staging-environment-sandbox)
     - [Get Wallet Balance](#get-wallet-balance)
+      - [Parameters](#parameters)
+      - [Returns](#returns)
+      - [Example](#example)
+    - [Get All Transactions](#get-all-transactions)
       - [Parameters](#parameters-1)
       - [Returns](#returns-1)
       - [Example](#example-1)
-    - [Get All Transactions](#get-all-transactions)
+    - [Get Transaction By Reference](#get-transaction-by-reference)
       - [Parameters](#parameters-2)
       - [Returns](#returns-2)
       - [Example](#example-2)
-    - [Get Transaction By Reference](#get-transaction-by-reference)
+    - [Orders](#orders)
+    - [Estimate Order](#estimate-order)
       - [Parameters](#parameters-3)
       - [Returns](#returns-3)
       - [Example](#example-3)
-    - [Orders](#orders)
-    - [Estimate Order](#estimate-order)
+    - [Get Address Coordinates](#get-address-coordinates)
       - [Parameters](#parameters-4)
       - [Returns](#returns-4)
       - [Example](#example-4)
-    - [Get Address Coordinates](#get-address-coordinates)
+    - [Confirm Order](#confirm-order)
       - [Parameters](#parameters-5)
       - [Returns](#returns-5)
       - [Example](#example-5)
-    - [Confirm Order](#confirm-order)
+    - [Cancel Order](#cancel-order)
       - [Parameters](#parameters-6)
       - [Returns](#returns-6)
       - [Example](#example-6)
-    - [Cancel Order](#cancel-order)
+    - [Dispute Order](#dispute-order)
       - [Parameters](#parameters-7)
       - [Returns](#returns-7)
       - [Example](#example-7)
-    - [Dispute Order](#dispute-order)
+    - [Fetch Orders](#fetch-orders)
       - [Parameters](#parameters-8)
       - [Returns](#returns-8)
       - [Example](#example-8)
-    - [Fetch Orders](#fetch-orders)
+    - [Fetch Order by ID](#fetch-order-by-id)
       - [Parameters](#parameters-9)
       - [Returns](#returns-9)
       - [Example](#example-9)
-    - [Fetch Order by ID](#fetch-order-by-id)
+    - [Fetch Orders Analytics](#fetch-orders-analytics)
       - [Parameters](#parameters-10)
       - [Returns](#returns-10)
       - [Example](#example-10)
-    - [Fetch Orders Analytics](#fetch-orders-analytics)
-      - [Parameters](#parameters-11)
-      - [Returns](#returns-11)
-      - [Example](#example-11)
 
 ## Introduction 🚀
 
@@ -90,19 +86,19 @@ To install the **SDK** in your application, you can install using `npm, yarn, pn
 **Npm**
 
 ```bash
-npm install {{package name}}
+npm install messenger-merchant
 ```
 
 **Yarn**
 
 ```bash
-yarn add {{package name}}
+yarn add messenger-merchant
 ```
 
 **Bun**
 
 ```bash
-bun add {{package name}}
+bun add messenger-merchant
 ```
 
 ## Usage
@@ -110,7 +106,7 @@ bun add {{package name}}
 While the Messenger SDK prioritizes simplicity for developers, I'll provide a brief overview of each method to enhance understanding. To begin using the Messenger SDK, import the **CreateMessengerClient** from the **{{package name}}** package. That class provides the interface to work with the **SDK**.
 
 ```typescript
-import MessengerClient from {{package name}};
+import MessengerClient from messenger-merchant;
 ```
 
 Next, instantiate a new instance of the **CreateMessengerClient** class, enabling interaction with its methods. This class requires 3 arguments:
@@ -122,7 +118,7 @@ Next, instantiate a new instance of the **CreateMessengerClient** class, enablin
 You can obtain the Public and Private Keys from creating an account with messenger. To do this, go to
 
 ```typescript
-const messenger = new MessengerClient(
+const messengerClient = new MessengerClient(
   process.env.MESSENGER_PUBLIC_KEY as string,
   process.env.MESSENGER_PRIVATE_KEY as string,
   process.env.NODE_ENV as string
@@ -143,31 +139,6 @@ export interface BaseResponse {
 ```
 
 This response object allows you to extract crucial information from each method call, including the accompanying message, and any data returned by the method. Leveraging this structured response format enhances error handling and empowers developers to build robust applications with confidence.
-
-### Authentication
-
-This method is used to authenticate with the Messenger API and obtain the necessary access token for subsequent API calls. This method is crucial for establishing a secure connection between your application and the Messenger platform.
-
-#### Parameters
-
-- None
-
-#### Returns
-
-- An object containing the authentication response, including the access token.
-
-#### Example
-
-```typescript
-const response = await client.login();
-
-const accessToken = client.getAccessToken();
-
-console.log("New login is successful with response:", response);
-console.log("Access Token:", accessToken);
-```
-
-As you know, the SDK comes with `Typed Responses` which means automatic type definitions for API responses.
 
 ### Wallets
 
@@ -213,10 +184,12 @@ The **Get Wallet Balance** method allows you to check the balance of a specific 
 
 #### Example
 
-```typescript
-const walletBalanceResponse = await messengerWallet.checkWalletBalance();
+```javascript
+const getWalletBalance = async (req, res) => {
+  const checkWallet = await messengerClient.checkWalletBalance();
 
-console.log("Wallet Balance Response:", walletBalanceResponse);
+  return checkWallet;
+};
 ```
 
 ### Get All Transactions
@@ -233,13 +206,13 @@ An object containing the transactions response, providing details about all tran
 
 #### Example
 
-```typescript
-// Replace walletId with the actual identifier of the target wallet
-const walletId = 123;
+```javascript
+const getAllTransactions = async (req, res) => {
+  const walletId = 0000;
+  const allTransactions = await messengerClient.getAllTransactions(walletId);
 
-const transactionsResponse = await messengerWallet.getAllTransactions(walletId);
-
-console.log("All Transactions Response:", transactionsResponse);
+  return allTransactions;
+};
 ```
 
 ### Get Transaction By Reference
@@ -256,17 +229,15 @@ The **Get Transaction By Reference** method allows you to retrieve a specific tr
 
 #### Example
 
-```typescript
-// Replace reference with the actual unique reference identifier of the target transaction
-const reference = "transaction_reference_123";
+```javascript
+const getTransactionByRef = async (req, res) => {
+  const reference = "xxxx";
+  const transactionsByRef = await messengerClient.getTransactionByReference(
+    reference
+  );
 
-const transactionByReferenceResponse =
-  await messengerWallet.getTransactionByReference(reference);
-
-console.log(
-  "Transaction By Reference Response:",
-  transactionByReferenceResponse
-);
+  return transactionsByRef;
+};
 ```
 
 ### Orders
@@ -291,29 +262,30 @@ The **Estimate Order** method allows you to obtain a cost estimate for a propose
 
 #### Example
 
-```typescript
-// Replace orderData with the actual data for the order
-const orderData = [
-  {
-    type: "pickup",
-    latitude: 6.457,
-    longitude: 3.158,
-  },
-  {
-    type: "delivery",
-    latitude: 7.4351,
-    longitude: 3.9143,
-  },
-  {
-    type: "delivery",
-    latitude: 6.4555201,
-    longitude: 3.3810686,
-  },
-];
+```javascript
+const orderEstimate = async (req, res) => {
+  const orderData = [
+    {
+      type: "pickup",
+      latitude: 6.457,
+      longitude: 3.158,
+    },
+    {
+      type: "delivery",
+      latitude: 7.4351,
+      longitude: 3.9143,
+    },
+    {
+      type: "delivery",
+      latitude: 6.4555201,
+      longitude: 3.3810686,
+    },
+  ];
 
-const orderEstimateResponse = await messengerOrder.estimateOrder(orderData);
+  const orderEstimate = await messengerClient.estimateOrder(orderData);
 
-console.log("Order Estimate Response:", orderEstimateResponse);
+  return orderEstimate;
+};
 ```
 
 ### Get Address Coordinates
@@ -331,17 +303,17 @@ The **Get Address Coordinates** method allows you to obtain the coordinates (lat
 
 #### Example
 
-```typescript
-// Replace addressData with the actual address data
-const addressData = {
-  address: "456 Park Avenue",
+```javascript
+const addressCoordinate = async (req, res) => {
+  const addressData = {
+    address: "456 Park Avenue",
+  };
+  const addressCoordinate = await messengerClient.getAddressCoordinates(
+    addressData
+  );
+
+  return addressCoordinate;
 };
-
-const addressCoordinateResponse = await messengerOrder.getAddressCoordinates(
-  addressData
-);
-
-console.log("Address Coordinate Response:", addressCoordinateResponse);
 ```
 
 ### Confirm Order
@@ -375,52 +347,52 @@ The **Confirm Order** method allows you to confirm and place an order based on t
 
 #### Example
 
-```typescript
-// Replace orderData with the actual data for the order
-const orderData = {
-  estimate_token: "z1amuwvvf4c7g4ou87gf", // this is the token from estimate call
-  // "scheduled_for": "2023-06-09 13:00",
-  locations: [
-    {
-      label: "home",
-      address: "Ojo",
-      type: "pickup",
-      latitude: 6.457,
-      longitude: 3.158,
-      note: "Pick from the gate",
-      contact_name: "Wunmi",
-      contact_phone: "08089722636",
-      contact_alternate_phone: null,
-    },
-    {
-      label: "home",
-      address: "bodija",
-      type: "delivery",
-      latitude: 7.4351,
-      longitude: 3.9143,
-      note: "Pick from the gate",
-      contact_name: "Wunmi",
-      contact_phone: "08089722636",
-      contact_alternate_phone: null,
-    },
-    {
-      type: "delivery",
-      label: "Office",
-      address: "Ikate",
-      latitude: 6.4555201,
-      longitude: 3.3810686,
-      note: "Give to Charity",
-      contact_name: "Wunmi",
-      contact_phone: "08089722636",
-      contact_alternate_phone: null,
-    },
-  ],
-  payment_method: "wallet",
+```javascript
+const confirmOrder = async (req, res) => {
+  const orderData = {
+    estimate_token: "xxxxx", // this is the token from estimate call
+    // "scheduled_for": "2023-06-09 13:00",
+    locations: [
+      {
+        label: "home",
+        address: "Ojo",
+        type: "pickup",
+        latitude: 6.457,
+        longitude: 3.158,
+        note: "Pick from the gate",
+        contact_name: "Wunmi",
+        contact_phone: "xxxxxxxxxxx",
+        contact_alternate_phone: null,
+      },
+      {
+        label: "home",
+        address: "bodija",
+        type: "delivery",
+        latitude: 7.4351,
+        longitude: 3.9143,
+        note: "Pick from the gate",
+        contact_name: "Wunmi",
+        contact_phone: "xxxxxxxxxxx",
+        contact_alternate_phone: null,
+      },
+      {
+        type: "delivery",
+        label: "Office",
+        address: "Ikate",
+        latitude: 6.4555201,
+        longitude: 3.3810686,
+        note: "Give to Charity",
+        contact_name: "Wunmi",
+        contact_phone: "xxxxxxxxxxx",
+        contact_alternate_phone: null,
+      },
+    ],
+    payment_method: "wallet",
+  };
+  const confirmOrderResponse = await messengerClient.confirmOrder(orderData);
+
+  return confirmOrderResponse;
 };
-
-const confirmOrderResponse = await messengerOrder.confirmOrder(orderData);
-
-console.log("Confirm Order Response:", confirmOrderResponse);
 ```
 
 ### Cancel Order
@@ -441,19 +413,19 @@ The **Cancel Order** method allows you to cancel a specific order by providing t
 
 #### Example
 
-```typescript
-// Replace cancelOrderData and orderId with the actual cancellation data and order ID
-const cancelOrderData = {
-  reason: "Item out of stock",
+```javascript
+const cancelAOrder = async (req, res) => {
+  const cancelOrderData = {
+    reason: "Item out of stock",
+  };
+  const orderId = 1234;
+  const cancelOrderResponse = await messengerClient.cancelOrder(
+    cancelOrderData,
+    orderId
+  );
+
+  return cancelOrderResponse;
 };
-const orderId = 1234;
-
-const cancelOrderResponse = await messengerOrder.cancelOrder(
-  cancelOrderData,
-  orderId
-);
-
-console.log("Cancel Order Response:", cancelOrderResponse);
 ```
 
 ### Dispute Order
@@ -474,19 +446,20 @@ The **Dispute Order** method allows you to dispute a specific order by providing
 
 #### Example
 
-```typescript
-// Replace disputeOrderData and orderId with the actual dispute data and order ID
-const disputeOrderData: DisputeOrderData = {
-  comment: "Incorrect item received",
+```javascript
+const disputeAOrder = async (req, res) => {
+  const disputeOrderData: DisputeOrderData = {
+    comment: "Incorrect item received",
+  };
+  const orderId = 5678;
+
+  const disputeOrderResponse = await messengerClient.disputeOrder(
+    disputeOrderData,
+    orderId
+  );
+
+  return disputeOrderResponse;
 };
-const orderId = 5678;
-
-const disputeOrderResponse = await messengerOrder.disputeOrder(
-  disputeOrderData,
-  orderId
-);
-
-console.log("Dispute Order Response:", disputeOrderResponse);
 ```
 
 ### Fetch Orders
@@ -503,10 +476,12 @@ The **Fetch Orders** method allows you to retrieve a list of all orders associat
 
 #### Example
 
-```typescript
-const orderListResponse = await messengerOrder.fetchOrders();
+```javascript
+const getAllOrder = async (req, res) => {
+  const orderListResponse = await messengerClient.fetchOrders();
 
-console.log("Order List Response:", orderListResponse);
+  return orderListResponse;
+};
 ```
 
 ### Fetch Order by ID
@@ -523,13 +498,14 @@ The **Fetch Order By Id** method allows you to retrieve details about a specific
 
 #### Example
 
-```typescript
-// Replace orderId with the actual identifier of the target order
-const orderId = 9876;
+```javascript
+const getAOrder = async (req, res) => {
+  const orderId = 9876;
 
-const singleOrderResponse = await messengerOrder.fetchOrderById(orderId);
+  const singleOrderResponse = await messengerClient.fetchOrderById(orderId);
 
-console.log("Single Order Response:", singleOrderResponse);
+  return singleOrderResponse;
+};
 ```
 
 ### Fetch Orders Analytics
@@ -546,8 +522,9 @@ The **Fetch Orders Analytics** method allows you to retrieve analytics and insig
 
 #### Example
 
-```typescript
-const orderAnalyticsResponse = await messengerOrder.fetchOrdersAnalytics();
-
-console.log("Order Analytics Response:", orderAnalyticsResponse);
+```javascript
+const getOrderAnalytics = async (req, res) => {
+  const orderAnalyticsResponse = await messengerClient.fetchOrdersAnalytics();
+  return orderAnalyticsResponse;
+};
 ```

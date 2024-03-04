@@ -11,6 +11,10 @@
     "build": "rm -rf dist && microbundle --tsconfig tsconfig.json --no-sourcemap",
     "dev": "microbundle --watch --tsconfig tsconfig.json --no-sourcemap"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getmessenger/messenger-api-sdk"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

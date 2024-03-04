@@ -91,7 +91,13 @@ export class MessengerSDKBase {
   public async makeApiRequest<T>(config: AxiosRequestConfig<T>): Promise<T> {
     try {
       if (!this.accessToken) {
-        throw new Error("Access token is missing or invalid.");
+        const loginResponse = await this.login();
+
+        if (!loginResponse || !this.accessToken) {
+          throw new Error("Failed to obtain access token.");
+        }
+
+        console.log("Access token obtained:", this.accessToken);
       }
 
       config.headers = {
