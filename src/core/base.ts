@@ -12,23 +12,29 @@ export class MessengerSDKBase {
   public publicKey: string;
   public privateKey: string;
   protected axiosInstance: AxiosInstance;
-  public environment: string = ENVIRON.PROD;
+  public environment: string;
   private baseAuthUrl: string;
   protected accessToken: string | null = null;
   private authenticationData: AuthProps | null = null;
 
-  constructor(publicKey: string, privateKey: string, environment?: string) {
+  constructor(publicKey: string, privateKey: string) {
     this.baseAuthUrl = "/auth";
-    if (!publicKey || !privateKey)
+    if (!publicKey || !privateKey) {
       throw new Error("Public or Private keys are required!");
-    if (!this.environment)
-      console.warn("No environment specified. Defaulting to development.");
-    this.environment = environment || "development";
+    }
+
+    // Determine environment based on keys
+    if (
+      publicKey.toLowerCase().includes("live") ||
+      privateKey.toLowerCase().includes("live")
+    ) {
+      this.environment = ENVIRON.PROD; // Live environment
+    } else {
+      this.environment = ENVIRON.STAGING; // Staging environment
+    }
 
     this.baseURL =
-      this.environment === "test" || this.environment === "development"
-        ? ENVIRON.STAGING
-        : ENVIRON.PROD;
+      this.environment === ENVIRON.PROD ? ENVIRON.PROD : ENVIRON.STAGING;
     this.publicKey = publicKey;
     this.privateKey = privateKey;
 
@@ -96,8 +102,6 @@ export class MessengerSDKBase {
         if (!loginResponse || !this.accessToken) {
           throw new Error("Failed to obtain access token.");
         }
-
-        console.log("Access token obtained:", this.accessToken);
       }
 
       config.headers = {
@@ -115,9 +119,7 @@ export class MessengerSDKBase {
         if (axiosError.response && axiosError.response.status === 401) {
           console.error("Received 401. Attempting to refresh access token...");
 
-          // Attempt to refresh access token
           await this.login();
-          console.log(this.login());
 
           console.log(
             "Access token successfully refreshed. Retrying the request."

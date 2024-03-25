@@ -120,8 +120,7 @@ You can obtain the Public and Private Keys from creating an account with messeng
 ```typescript
 const messengerClient = new MessengerClient(
   process.env.MESSENGER_PUBLIC_KEY as string,
-  process.env.MESSENGER_PRIVATE_KEY as string,
-  process.env.NODE_ENV as string
+  process.env.MESSENGER_PRIVATE_KEY as string
 );
 ```
 

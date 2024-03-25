@@ -7,12 +7,8 @@ import {
 
 export abstract class MessengerWallet extends MessengerSDKBase {
   private baseWalletUrl: string;
-  constructor(
-    publicKey: string,
-    privateKey: string,
-    environment: "production" | "development" | string
-  ) {
-    super(publicKey, privateKey, environment as "production" | "development");
+  constructor(publicKey: string, privateKey: string) {
+    super(publicKey, privateKey);
     this.baseWalletUrl = "/wallets";
   }
 

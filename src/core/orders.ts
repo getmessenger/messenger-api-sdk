@@ -17,12 +17,8 @@ import { MessengerWallet } from "./wallet";
 export abstract class MessengerOrder extends MessengerWallet {
   private baseOrderUrl: string;
 
-  constructor(
-    publicKey: string,
-    privateKey: string,
-    environment: "production" | "development"
-  ) {
-    super(publicKey, privateKey, environment);
+  constructor(publicKey: string, privateKey: string) {
+    super(publicKey, privateKey);
     this.baseOrderUrl = "/orders";
   }
 

@@ -2,7 +2,7 @@ import { AddressCoordinateResponse, CancelOrderResponse, ConfirmOrderResponse, D
 import { MessengerWallet } from "./wallet";
 export declare abstract class MessengerOrder extends MessengerWallet {
     private baseOrderUrl;
-    constructor(publicKey: string, privateKey: string, environment: "production" | "development");
+    constructor(publicKey: string, privateKey: string);
     estimateOrder(orderData: any): Promise<OrderEstimateResponse>;
     getAddressCoordinates(addressData: any): Promise<AddressCoordinateResponse>;
     confirmOrder(orderData: any): Promise<ConfirmOrderResponse>;

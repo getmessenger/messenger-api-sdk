@@ -9,7 +9,7 @@ export declare class MessengerSDKBase {
     private baseAuthUrl;
     protected accessToken: string | null;
     private authenticationData;
-    constructor(publicKey: string, privateKey: string, environment?: string);
+    constructor(publicKey: string, privateKey: string);
     login(): Promise<AuthResponseProps>;
     makeApiRequest<T>(config: AxiosRequestConfig<T>): Promise<T>;
     getAccessToken(): string | null;

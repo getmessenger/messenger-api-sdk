@@ -1,12 +1,8 @@
 import { MessengerOrder } from "./core/orders";
 
 class MessengerClient extends MessengerOrder {
-  constructor(
-    publicKey: string,
-    privateKey: string,
-    environment: "production" | "development"
-  ) {
-    super(publicKey, privateKey, environment);
+  constructor(publicKey: string, privateKey: string) {
+    super(publicKey, privateKey);
   }
 }
 export default MessengerClient;
